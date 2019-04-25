@@ -26,15 +26,15 @@ void error(const char *msg){
 }
 void* Write(void* arg){
 	while (1){
-		int i=getpid();
-		temp = recv(sockhd[i], buffer1, sizeof(buffer1), 0);
-		n = send(sockhd[i], buffer1, strlen(buffer1), 0);
+		int j=getpid();
+		temp = recv(sockhd[j], buffer1, sizeof(buffer1), 0);
+		n = send(sockhd[j], buffer1, strlen(buffer1), 0);
 		
 		if (n < 0 && temp < 0){
 			error("Error writing");
 		}
     		
-		int i = strncmp(":exit", buffer1, 6);//replace with select statment
+		int i = strncmp(":exit", buffer1, 5);//replace with select statment
 
 		if (i == 0){
 			break;
