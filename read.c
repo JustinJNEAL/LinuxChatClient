@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h> 
+
 void read();
-
-
+//code to test the read() function
 int main()
 {
    read();
    return 0;
 }
 
+//read function
 void read(){
 char ch, file_name[25]="chatroom.txt";
    FILE *fp;
