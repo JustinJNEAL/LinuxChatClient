@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
 
     portNum = atoi(argv[2]);
-	stpcpy(user,arg[3]);
+    stpcpy(user,argv[3]);
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
