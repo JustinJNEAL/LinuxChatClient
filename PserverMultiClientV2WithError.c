@@ -24,10 +24,12 @@ void error(const char *msg){
     perror(msg);
     exit(1);
 }
-void* Write(void* arg){
+void* Write(int* arg){
 	while (1){
-		temp = recv(*arg, buffer1, sizeof(buffer1), 0);
-		n = send(*arg, buffer1, strlen(buffer1), 0);
+		int* temp=(int*) arg;
+		int newTemp=*temp;
+		temp = recv(newTemp, buffer1, sizeof(buffer1), 0);
+		n = send(newTemp, buffer1, strlen(buffer1), 0);
 		
 		if (n < 0 && temp < 0){
 			error("Error writing");
