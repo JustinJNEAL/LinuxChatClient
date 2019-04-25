@@ -26,9 +26,8 @@ void error(const char *msg){
 }
 void* Write(void* arg){
 	while (1){
-		int j=0;
-		temp = recv(sockhd[j], buffer1, sizeof(buffer1), 0);
-		n = send(sockhd[j], buffer1, strlen(buffer1), 0);
+		temp = recv(arg, buffer1, sizeof(buffer1), 0);
+		n = send(arg, buffer1, strlen(buffer1), 0);
 		
 		if (n < 0 && temp < 0){
 			error("Error writing");
@@ -86,7 +85,7 @@ int main(int argc, char *argv[])
 		clientLen = sizeof(client_addr);
 		// Lets users see that the server is on and listening
 		puts("Waiting for incoming connections...");
-
+		long long V=(long long)i;
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
 	        sockhd[i]=newsockfd;
 		
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
 			error("Error accepting.");
 		}
 		
-		pthread_create(&tid[i], &attr,Write,NULL);
+		pthread_create(&tid[i], &attr,Write,&sockhd[i]);
 	    
 	    
 	}
