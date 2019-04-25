@@ -13,6 +13,7 @@ int main()
 
 //read function
 void read(){
+char tmp[1024];
 char ch, file_name[25]="chatroom.txt";
    FILE *fp;
  
@@ -24,12 +25,20 @@ char ch, file_name[25]="chatroom.txt";
       exit(EXIT_FAILURE);
    }
  
-   printf("WELCOME TO THE CHATROOM \n", file_name);
-   printf("======================= \n");
+   //printf("WELCOME TO THE CHATROOM \n", file_name);
+   //printf("======================= \n");
  
-   while((ch = fgetc(fp)) != EOF)
-      printf("%c", ch);
+   //while((ch = fgetc(fp)) != EOF)
+   //   printf("%c", ch);
  
+
+
+
+   while(!feof(fp))
+   fgets(tmp, 1024, fp);
+   printf("%s", tmp);
+	
+
    fclose(fp);
 
 }
