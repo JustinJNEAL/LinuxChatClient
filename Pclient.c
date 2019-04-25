@@ -39,10 +39,7 @@ void* Write(void* arg){
 		if (n < 0){
 			error("Error writing");
 		}
-		if (strncmp(buffer1, ":exit", 5) == 0)
-		{
-			break;
-		}
+		
     
 		 
     }
