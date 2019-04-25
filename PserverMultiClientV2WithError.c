@@ -26,7 +26,7 @@ void error(const char *msg){
 }
 void* Write(void* arg){
 	while (1){
-		int i=pthread_self();
+		int i=getpid();
 		temp = recv(sockhd[i], buffer1, sizeof(buffer1), 0);
 		n = send(sockhd[i], buffer1, strlen(buffer1), 0);
 		
