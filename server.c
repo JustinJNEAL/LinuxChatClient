@@ -25,39 +25,6 @@ void error(const char *warning)
     exit(1);
 }
 
-void * recvMessage(int fd)
-{
-    int recvSize;
-    char buffer[CHARNUM];
-
-    memset(buffer, 0, CHARNUM);
-
-    while(1)
-    {
-        recvSize = recv(fd, buffer, CHARNUM, 0);
-        if (recvSize)
-        {
-            printf("%s", buffer);
-        }
-    }
-    return 0;
-}
-
-void * sendMessage(int newfd/*, struct sockaddr *c_address*/)
-{
-    char buffer[CHARNUM];
-
-    while(fgets(buffer, CHARNUM, stdin) != NULL)
-    {
-        if (strncmp(buffer, ":exit", 5) == 0)
-        {
-            error("Disconnected.");
-        }
-        send(newfd, buffer, CHARNUM, 0);
-    }
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
     int sockfd, newsockfd, yes = 1, recvSize;
@@ -117,21 +84,8 @@ int main(int argc, char *argv[])
         puts("...Connection established");
     }
 
-    if ((recv(newsockfd, username, sizeof(username), 0)) < 0)
-    {
-        perror("Read failed");
-    }
-
-    username[strlen(username) - 1] = 0;
-    memset(usrGreeting, 0, sizeof(usrGreeting));
-    strcpy(usrGreeting, "Welcome ");
-    strncat(usrGreeting, username, strlen(username));
-    strcat(usrGreeting, " to the chat!");
-    // Send greeting to client
-    send(newsockfd, usrGreeting, strlen(usrGreeting), 0);
-
     memset(fnl, 0, sizeof(fnl));
-    while((recvSize = recv(newsockfd, fnl, sizeof(buffer), 0)) > 0)
+    while((recvSize = recv(newsockfd, fnl, sizeof(fnl), 0)) > 0)
     {
         if (send(newsockfd, fnl, strlen(fnl), 0) < 0)
         {
