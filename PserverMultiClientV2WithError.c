@@ -26,8 +26,8 @@ void error(const char *msg){
 }
 void* Write(void* arg){
 	while (1){
-		temp = recv(arg, buffer1, sizeof(buffer1), 0);
-		n = send(arg, buffer1, strlen(buffer1), 0);
+		temp = recv(*arg, buffer1, sizeof(buffer1), 0);
+		n = send(*arg, buffer1, strlen(buffer1), 0);
 		
 		if (n < 0 && temp < 0){
 			error("Error writing");
