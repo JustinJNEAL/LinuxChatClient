@@ -19,14 +19,15 @@
 // Error function that takes message as parameter
 char buffer1[CHARNUM];
 int sockfd, portNum, n,newsockfd,temp;
+int sockhd[MAX_CLIENT];
 void error(const char *msg){
     perror(msg);
     exit(1);
 }
 void* Write(void* arg){
 	while (1){	
-		temp = recv(arg, buffer1, sizeof(buffer1), 0);
-		n = send(arg, buffer1, strlen(buffer1), 0);
+		temp = recv(sockhd[pthread_self()], buffer1, sizeof(buffer1), 0);
+		n = send(sockhd[pthread_self()], buffer1, strlen(buffer1), 0);
 	
 		if (n < 0 && temp < 0){
 			error("Error writing");
@@ -86,14 +87,14 @@ int main(int argc, char *argv[])
 		puts("Waiting for incoming connections...");
 
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-
+		sockhd[i]=newsockfd;
 		if (newsockfd < 0)
 		{
 			// Print accepting error
 			error("Error accepting.");
 		}
 
-		pthread_create(&tid[i], &attr,Write,newsockfd);
+		pthread_create(&tid[i], &attr,Write,NULL);
 	}
 	int j=0;
 	for(j=0;j<MAX_CLIENT;j++){
