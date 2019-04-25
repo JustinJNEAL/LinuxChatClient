@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 		puts("Waiting for incoming connections...");
 
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-	        pritnf("error after");
+	        printf("error after");
 		
 		if (newsockfd < 0)
 		{
