@@ -26,7 +26,7 @@ void error(const char *msg){
 }
 void* Write(void* arg){
 	while (1){
-		int j=getpid();
+		int j=0;
 		temp = recv(sockhd[j], buffer1, sizeof(buffer1), 0);
 		n = send(sockhd[j], buffer1, strlen(buffer1), 0);
 		
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 		puts("Waiting for incoming connections...");
 
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-	    
+	        sockhd[i]=newsockfd;
 		
 		if (newsockfd < 0)
 		{
@@ -97,8 +97,8 @@ int main(int argc, char *argv[])
 		}
 		
 		pthread_create(&tid[i], &attr,Write,NULL);
-	    printf("this is pid %d",getpid());
-	    sockhd[getpid()]=newsockfd;
+	    
+	    
 	}
 	int j=0;
 	for(j=0;j<MAX_CLIENT;j++){
