@@ -32,8 +32,8 @@ void* Write(void* arg){
 		fgets(buffer1, sizeof(buffer1), stdin);
 		strcat(temp,":");
 		strcat(temp,buffer1);
-		stpcpy(buffer1,temp);
-		n = send(sockfd, buffer1, strlen(buffer1), 0);
+		//stpcpy(buffer1,temp);
+		n = send(sockfd, temp, strlen(buffer1), 0);
 	
 		if (n < 0){
 			error("Error writing");
