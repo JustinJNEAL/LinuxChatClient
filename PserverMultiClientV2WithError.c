@@ -25,14 +25,15 @@ void error(const char *msg){
     exit(1);
 }
 void* Write(void* arg){
-	while (1){	
-		temp = recv(sockhd[pthread_self()], buffer1, sizeof(buffer1), 0);
-		n = send(sockhd[pthread_self()], buffer1, strlen(buffer1), 0);
-	
+	while (1){
+		int i=pthread_self();
+		temp = recv(sockhd[i], buffer1, sizeof(buffer1), 0);
+		n = send(sockhd[i], buffer1, strlen(buffer1), 0);
+		
 		if (n < 0 && temp < 0){
 			error("Error writing");
 		}
-    
+    		
 		int i = strncmp(":exit", buffer1, 6);//replace with select statment
 
 		if (i == 0){
