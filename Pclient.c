@@ -30,10 +30,6 @@ void* Write(void* arg){
 		stpcpy(temp,user);
 		memset(buffer1, 0, sizeof(buffer1));
 		fgets(buffer1, sizeof(buffer1), stdin);
-		if ((strncmp(buffer1, ":exit", 5)) == 0)
-		{
-			break;
-		}
 		strcat(temp,":");
 		strcat(temp,buffer1);
 		//stpcpy(buffer1,temp);
