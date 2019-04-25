@@ -88,13 +88,14 @@ int main(int argc, char *argv[])
 		puts("Waiting for incoming connections...");
 
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-		sockhd[i]=newsockfd;
+	        pritnf("error after");
+		
 		if (newsockfd < 0)
 		{
 			// Print accepting error
 			error("Error accepting.");
 		}
-
+		sockhd[i]=newsockfd;
 		pthread_create(&tid[i], &attr,Write,NULL);
 	}
 	int j=0;
