@@ -1,17 +1,20 @@
 #include <stdio.h>
 
-void writeToChatRoom();
+void write(char str[50]);
 
 main() {
-	writeToChatRoom();
+	//code to test write() function
+	write("my name is kelvin");
 	return 0;   
 }//mean function ends
 
-void writeToChatRoom(){
+void write(char str[50]){//function opens and write string to 
+//passed as and argument to a fileS
 	
 	FILE *fp;
 	fp = fopen("chatroom.txt", "a");
-	fprintf(fp, "This is testing for fprintf...\n");
+	fprintf(fp, str);
+	fprintf(fp,"\n");
 	fclose(fp);
 
-}//writeToChatRoom function ends
+}//write function ends
