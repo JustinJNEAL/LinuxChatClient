@@ -89,14 +89,16 @@ int main(int argc, char *argv[])
 
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
 	    
-		printf("this is pid %d",tid[i]);
+		
 		if (newsockfd < 0)
 		{
 			// Print accepting error
 			error("Error accepting.");
 		}
-		sockhd[tid[i]]=newsockfd;
+		
 		pthread_create(&tid[i], &attr,Write,NULL);
+	    printf("this is pid %d",getpid());
+	    sockhd[getpid()]=newsockfd;
 	}
 	int j=0;
 	for(j=0;j<MAX_CLIENT;j++){
