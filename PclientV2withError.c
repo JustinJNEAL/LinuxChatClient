@@ -30,6 +30,10 @@ void* Write(void* arg){
 		stpcpy(temp,user);
 		memset(buffer1, 0, sizeof(buffer1));
 		fgets(buffer1, sizeof(buffer1), stdin);
+		if (strncmp(buffer1, ":exit", 5) == 0)
+		{
+			break;
+		}
 		strcat(temp,":");
 		strcat(temp,buffer1);
 		//stpcpy(buffer1,temp);
@@ -39,11 +43,7 @@ void* Write(void* arg){
 			error("Error writing");
 		}
     
-		int i = strncmp(ExitStr, buffer1, strlen(ExitStr));
-
-		if (i == 0){
-			break;
-		}    
+		 
     }
     pthread_exit(0);
 }
