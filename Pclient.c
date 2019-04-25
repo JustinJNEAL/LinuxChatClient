@@ -34,7 +34,7 @@ void* Write(void* arg){
 		strcat(temp,":");
 		strcat(temp,buffer1);
 		//stpcpy(buffer1,temp);
-		n = send(sockfd, temp, strlen(buffer1), 0);
+		n = send(sockfd, temp, strlen(temp), 0);
 	
 		if (n < 0){
 			error("Error writing");
