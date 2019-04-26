@@ -13,23 +13,33 @@
 #include <netdb.h>
 #include <pthread.h>
 
-#define CHARNUM 159
+#define CHARNUM 160
+#define PORT 3333
 char buffer1[CHARNUM];
 char buffer2[CHARNUM];
 char user[10];
 char ExitStr[16];
-int sockfd, portNum, n;
-void error(const char *msg)
+int sockfd, n;
+
+void error(const char *warning)
 {
-    perror(msg);
+    perror(warning);
     exit(0);
 }
-void* Write(void* arg){
-	while (1){	
+
+void* Write(void* arg)
+{
+	while (1)
+    {	
 		char temp[CHARNUM+10];
 		stpcpy(temp,user);
 		memset(buffer1, 0, sizeof(buffer1));
 		fgets(buffer1, sizeof(buffer1), stdin);
+        if (strncmp(buffer1, ":exit", 5) == 0)
+        {
+            error("Program terminated");
+        }
+        
 		strcat(temp,":");
 		strcat(temp,buffer1);
 		//stpcpy(buffer1,temp);
@@ -73,14 +83,17 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     
-    if (argc < 4)
+    if (argc < 2)
     {
-        fprintf(stderr, "usage %s hostname port\n", argv[0]);
+        fprintf(stderr, "Usage: %s [HOST IP]\n", argv[0]);
         exit(1);
     }
 
-    portNum = atoi(argv[2]);
-    stpcpy(user,argv[3]);
+    printf("What's your name?\n");
+    memset(user, 0, sizeof(user));
+    fgets(user, sizeof(user), stdin);
+    
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -96,7 +109,8 @@ int main(int argc, char *argv[])
     memset((char *) &server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     memcpy((char *) &server_addr.sin_addr.s_addr, (char *) server->h_addr_list[0], server->h_length);
-    server_addr.sin_port = htons(portNum);
+    server_addr.sin_port = htons(PORT);
+
     if (connect(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     {
         error("Connection failed");
@@ -111,8 +125,9 @@ int main(int argc, char *argv[])
 
     pthread_create(&tid[0], &attr,Write,NULL);
     pthread_create(&tid[1], &attr,Read,NULL);
-	int j=0;
-	for(j=0;j<2;j++){
+
+	for(int j = 0; j < 2; j++)
+    {
 		pthread_join(tid[j],NULL);
 	}
 
