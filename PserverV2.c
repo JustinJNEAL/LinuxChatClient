@@ -8,12 +8,13 @@
 #include <pthread.h>
 
 #define CHARNUM 160
-#define MAX_CLIENT 5
+#define MAX_MAX_CLIENT 25
 #define PORT 3333
 
 // Error function that takes message as parameter
 char buffer1[CHARNUM];
-int sockfd, n, newsockfd, temp, sockhd[MAX_CLIENT], CountOnlineUser;
+int MAX_CLIENT=5;
+int sockfd, n, newsockfd, temp, sockhd[MAX_MAX_CLIENT], CountOnlineUser;
 
 void error(const char *warning){
     perror(warning);
@@ -29,7 +30,8 @@ void* Write(int* arg){
 	}
 	int j = 0;
 	for(j = 0; j < CountOnlineUser; j++){
-		if ((n = send(sockhd[j], buffer1, strlen(buffer1), 0)) < 0){
+		
+		if (send(sockhd[j], buffer1, strlen(buffer1), 0) < 0){
 			perror("Error writing");
 		}
     	}	   
@@ -39,6 +41,13 @@ void* Write(int* arg){
 
 
 int main(int argc, char *argv[]){
+	if(argc==2){
+		if(argv[1]<=MAX_MAX_CLIENT){
+			MAX_CLIENT=argv[1];
+		}else if(argv[1]>MAX_MAX_CLIENT){
+			
+		}
+	}
 	struct sockaddr_in server_addr, client_addr;
     	socklen_t clientLen;
 
@@ -63,17 +72,16 @@ int main(int argc, char *argv[]){
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 
-	listen(sockfd, MAX_CLIENT);
+	//listen(sockfd, MAX_CLIENT);
 	// Lets users see that the server is on and listening
-	puts("Waiting for incoming connections...");
-	clientLen = sizeof(client_addr);
+	//puts("Waiting for incoming connections...");
+	//clientLen = sizeof(client_addr);
     	CountOnlineUser=0;
     	for(int i = 0; i < MAX_CLIENT; i++){
 		// Listen for connection, allow maximum of 5 clients
-		//listen(sockfd, MAX_CLIENT);
-		//clientLen = sizeof(client_addr);
+		listen(sockfd, MAX_CLIENT);
+		clientLen = sizeof(client_addr);
 
-		//long long V=(long long)i;
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
 		sockhd[i]=newsockfd;
 		
