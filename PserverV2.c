@@ -21,48 +21,43 @@ void error(const char *warning){
 }
 
 void* Write(int* arg){
-	while (1){
-		int* temp=(int*) arg;
-		int newTemp=*temp;
-		if ((temp = recv(sockhd[newTemp], buffer1, sizeof(buffer1), 0)) < 0)
-		{
-			perror("Error reading");
+    while (1){
+	int* temp=(int*) arg;
+	int newTemp=*temp;
+	if ((temp = recv(sockhd[newTemp], buffer1, sizeof(buffer1), 0)) < 0){
+	        perror("Error reading");
+	}
+	int j = 0;
+	for(j = 0; j < CountOnlineUser; j++){
+		if ((n = send(sockhd[j], buffer1, strlen(buffer1), 0)) < 0){
+			perror("Error writing");
 		}
-
-		for(int j = 0; j < CountOnlineUser; j++){
-			if ((n = send(sockhd[j], buffer1, strlen(buffer1), 0)) < 0)
-			{
-				perror("Error writing");
-			}
     	}	   
     }
     pthread_exit(0);
 }
 
 
-int main(int argc, char *argv[])
-{
-    struct sockaddr_in server_addr, client_addr;
-    socklen_t clientLen;
+int main(int argc, char *argv[]){
+	struct sockaddr_in server_addr, client_addr;
+    	socklen_t clientLen;
 
-    // Create socket
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-    {
-        // Print socket connection error
-        error("Error opening socket.");
-    }
+    	// Create socket
+    	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    	if (sockfd < 0){
+        	// Print socket connection error
+        	error("Error opening socket.");
+    	}
 
-    memset((char *) &server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
+    	memset((char *) &server_addr, 0, sizeof(server_addr));
+    	server_addr.sin_family = AF_INET;
+    	server_addr.sin_addr.s_addr = INADDR_ANY;
+    	server_addr.sin_port = htons(PORT);
 
-    if (bind(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
-    {
-        // Print binding error
-        error("Binding failed");
-    }
+    	if (bind(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0){
+        	// Print binding error
+        	error("Binding failed");
+    	}
 
 	pthread_t tid[MAX_CLIENT];
 	pthread_attr_t attr;
@@ -72,33 +67,30 @@ int main(int argc, char *argv[])
 	// Lets users see that the server is on and listening
 	puts("Waiting for incoming connections...");
 	clientLen = sizeof(client_addr);
-
-    for(int i = 0; i < MAX_CLIENT; i++)
-	{
+    	CountOnlineUser=0;
+    	for(int i = 0; i < MAX_CLIENT; i++){
 		// Listen for connection, allow maximum of 5 clients
 		//listen(sockfd, MAX_CLIENT);
 		//clientLen = sizeof(client_addr);
 
-		long long V=(long long)i;
+		//long long V=(long long)i;
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-	        sockhd[i]=newsockfd;
+		sockhd[i]=newsockfd;
 		
-		if (newsockfd < 0)
-		{
+		if (newsockfd < 0){
 			// Print accepting error
 			error("Error accepting.");
 		}
 		
 		pthread_create(&tid[i], &attr,Write,&i);
-	    CountOnlineUser++;
-	    
+		CountOnlineUser++;	    
 	}
 	int j=0;
-	for(j=0;j<MAX_CLIENT;j++){
+  	for(j=0;j<MAX_CLIENT;j++){
 		pthread_join(tid[j],NULL);
-	}
-    close(newsockfd);
-    close(sockfd);
+    	}
+	close(newsockfd);
+	close(sockfd);
     
-    return 0;
+	return 0;
 }
