@@ -15,9 +15,11 @@
 
 #define CHARNUM 160
 #define PORT 3333
+#define USRCAP 10
+
 char buffer1[CHARNUM];
 char buffer2[CHARNUM];
-char user[10];
+char user[USRCAP];
 char ExitStr[16];
 int sockfd, n;
 
@@ -37,7 +39,8 @@ void* Write(void* arg)
 		fgets(buffer1, sizeof(buffer1), stdin);
         if (strncmp(buffer1, ":exit", 5) == 0)
         {
-            error("Program terminated");
+            puts("Program terminated");
+            exit(0);
         }
         
 		strcat(temp,":");
@@ -83,15 +86,14 @@ int main(int argc, char *argv[])
     struct hostent *server;
 
     
-    if (argc < 2)
+    if (argc < 3)
     {
-        fprintf(stderr, "Usage: %s [HOST IP]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [HOST IP] [USERNAME]\n", argv[0]);
         exit(1);
     }
 
-    printf("What's your name?\n");
     memset(user, 0, sizeof(user));
-    fgets(user, sizeof(user), stdin);
+    strcpy(user, argv[2]);
     
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
