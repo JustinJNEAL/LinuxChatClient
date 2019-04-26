@@ -21,16 +21,20 @@ void error(const char *warning){
 }
 
 void* Write(int* arg){
-	while (1){
-		int* temp=(int*) arg;
-		int newTemp=*temp;
-		if ((temp = recv(sockhd[newTemp], buffer1, sizeof(buffer1), 0)) < 0)
+	int* temp = (int*) arg;
+	int newTemp=*temp;
+
+	while (1){	
+		
+		memset(buffer1, 0, sizeof(buffer1));
+		if (recv(sockhd[newTemp - 1], buffer1, sizeof(buffer1), 0) < 0)
 		{
 			perror("Error reading");
 		}
-
-		for(int j = 0; j < CountOnlineUser; j++){
-			if ((n = send(sockhd[j], buffer1, strlen(buffer1), 0)) < 0)
+		int j = 0;
+		for(j = 0; j < CountOnlineUser; j++){
+			//n = send(sockhd[j], buffer1, strlen(buffer1)
+			if (send(sockhd[j], buffer1, strlen(buffer1), 0) < 0)
 			{
 				perror("Error writing");
 			}
@@ -58,6 +62,9 @@ int main(int argc, char *argv[])
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
 
+	// Set socket option (for reuse of port immediately after disconnection)
+	int yes = 1;
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
     if (bind(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     {
         // Print binding error
@@ -68,20 +75,17 @@ int main(int argc, char *argv[])
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 
-	listen(sockfd, MAX_CLIENT);
 	// Lets users see that the server is on and listening
 	puts("Waiting for incoming connections...");
-	clientLen = sizeof(client_addr);
 
     for(int i = 0; i < MAX_CLIENT; i++)
 	{
 		// Listen for connection, allow maximum of 5 clients
-		//listen(sockfd, MAX_CLIENT);
-		//clientLen = sizeof(client_addr);
-
-		long long V=(long long)i;
+		listen(sockfd, MAX_CLIENT);
+		clientLen = sizeof(client_addr);
+		//long long V=(long long)i;
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
-	        sockhd[i]=newsockfd;
+	    sockhd[i]=newsockfd;
 		
 		if (newsockfd < 0)
 		{
@@ -90,13 +94,17 @@ int main(int argc, char *argv[])
 		}
 		
 		pthread_create(&tid[i], &attr,Write,&i);
+		int *ptr = 100;
+		wait(ptr);
 	    CountOnlineUser++;
 	    
 	}
+
 	int j=0;
 	for(j=0;j<MAX_CLIENT;j++){
 		pthread_join(tid[j],NULL);
 	}
+
     close(newsockfd);
     close(sockfd);
     
