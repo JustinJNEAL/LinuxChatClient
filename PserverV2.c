@@ -7,50 +7,41 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#define CHARNUM 159
+#define CHARNUM 160
 #define MAX_CLIENT 5
+#define PORT 3333
 
 // Error function that takes message as parameter
 char buffer1[CHARNUM];
-int sockfd, portNum, n,newsockfd,temp;
-int sockhd[MAX_CLIENT];
-int CountOnlineUser;
-void error(const char *msg){
-    perror(msg);
+int sockfd, n, newsockfd, temp, sockhd[MAX_CLIENT], CountOnlineUser;
+
+void error(const char *warning){
+    perror(warning);
     exit(1);
 }
+
 void* Write(int* arg){
 	while (1){
 		int* temp=(int*) arg;
 		int newTemp=*temp;
-		temp = recv(sockhd[newTemp], buffer1, sizeof(buffer1), 0);
-		int j=0;
-		for(j=0;j<CountOnlineUser;j++){
-			n = send(sockhd[j], buffer1, strlen(buffer1), 0);
-		
-			if (n < 0 && temp < 0){
-				error("Error writing");
-			}
-    	}	
-		int i = strncmp(":exit", buffer1, 5);//replace with select statment
+		if ((temp = recv(sockhd[newTemp], buffer1, sizeof(buffer1), 0)) < 0)
+		{
+			perror("Error reading");
+		}
 
-		if (i == 0){
-			break;
-		}    
+		for(int j = 0; j < CountOnlineUser; j++){
+			if ((n = send(sockhd[j], buffer1, strlen(buffer1), 0)) < 0)
+			{
+				perror("Error writing");
+			}
+    	}	   
     }
     pthread_exit(0);
 }
 
+
 int main(int argc, char *argv[])
 {
-    // If port number is not provided, print error and exit program
-    if (argc < 2)
-    {
-        // Print no port number error
-        fprintf(stderr, "Port number not provided. Program terminated.\n");
-        exit(1);
-    }
-
     struct sockaddr_in server_addr, client_addr;
     socklen_t clientLen;
 
@@ -63,27 +54,31 @@ int main(int argc, char *argv[])
     }
 
     memset((char *) &server_addr, 0, sizeof(server_addr));
-    portNum = atoi(argv[1]);
-
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(portNum);
+    server_addr.sin_port = htons(PORT);
 
     if (bind(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     {
         // Print binding error
-        error("Binding failed.");
+        error("Binding failed");
     }
+
 	pthread_t tid[MAX_CLIENT];
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
-	int i=0;
-    for(i=0;i<MAX_CLIENT;i++){
+
+	listen(sockfd, MAX_CLIENT);
+	// Lets users see that the server is on and listening
+	puts("Waiting for incoming connections...");
+	clientLen = sizeof(client_addr);
+
+    for(int i = 0; i < MAX_CLIENT; i++)
+	{
 		// Listen for connection, allow maximum of 5 clients
-		listen(sockfd, MAX_CLIENT);
-		clientLen = sizeof(client_addr);
-		// Lets users see that the server is on and listening
-		puts("Waiting for incoming connections...");
+		//listen(sockfd, MAX_CLIENT);
+		//clientLen = sizeof(client_addr);
+
 		long long V=(long long)i;
 		newsockfd = accept(sockfd, (struct sockaddr *) &client_addr, &clientLen);
 	        sockhd[i]=newsockfd;
