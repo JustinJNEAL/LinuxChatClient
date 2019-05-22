@@ -5,10 +5,10 @@
 ### Prerequisites
 
 ### Installation
+
 ## Authors
 * **Justin Neal** - *Server and client framework* - [GitHub](https://github.com/JustinJNEAL)
 * **Parsa Sarirafraz** - *Multithreading features* - [GitHub](https://github.com/psarirafraz)
-* **Kelvin Blojay** - *Supporting features* - [GitHub](https://github.com/kelvinblojay)
 
 ## License
 
